@@ -89,7 +89,7 @@ RUN set -eux && \
    # 更新源地址并更新系统软件
    apt-get update -qqy && apt-get upgrade -qqy && \
    # 安装依赖包
-   apt-get install -qqy --no-install-recommends $PKG_DEPS && \
+   apt-get install -qqy $PKG_DEPS && \
    rm -rf /var/lib/apt/lists/* && \
    # 更新时区
    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && \
