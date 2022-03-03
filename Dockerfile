@@ -48,7 +48,6 @@ ARG PKG_DEPS="\
     net-tools \
     git \
     vim \
-    tzdata \
     curl \
     wget \
     lsof \
