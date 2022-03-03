@@ -30,6 +30,8 @@ ENV MYSQL_VERSION=$MYSQL_VERSION
 # 工作目录
 ARG MYSQL_DIR=/data/mysql
 ENV MYSQL_DIR=$MYSQL_DIR
+ARG MYSQL_DATA=/data/mysql
+ENV MYSQL_DATA=$MYSQL_DATA
 # 环境变量
 ARG PATH=/data/mysql/bin:$PATH
 ENV PATH=$PATH
@@ -124,6 +126,7 @@ RUN set -eux && \
     chmod 775 /docker-entrypoint.sh && \
     ln -sf /data/mysql/lib/mysql/libjemalloc.so.1 /usr/lib64/libjemalloc.so.1 && \
     ln -sf /data/mysql/lib /data/mysql/lib64 && \
+    ln -sf /data/mysql/bin/* /usr/bin/ && \
     echo "/data/mysql/lib" >> /etc/ld.so.conf
 
 
@@ -137,10 +140,10 @@ EXPOSE 3306 33060
 USER mysql
 
 # ***** 工作目录 *****
-WORKDIR ["/data/mysql"]
+WORKDIR ${MYSQL_DIR}
 
 # ***** 挂载目录 *****
-VOLUME ["/data/mysql/data"]
+VOLUME ${MYSQL_DATA}
 
 # ***** 入口 *****
 ENTRYPOINT ["/docker-entrypoint.sh"]
