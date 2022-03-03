@@ -33,23 +33,27 @@ ENV MYSQL_DIR=$MYSQL_DIR
 # 环境变量
 ARG PATH=/data/mysql/bin:$PATH
 ENV PATH=$PATH
-# ARG LD_PRELOAD=/usr/lib64/libjemalloc.so.1
-# ENV LD_PRELOAD=$LD_PRELOAD
+# 环境设置
+ARG DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=$DEBIAN_FRONTEND
 # 源文件下载路径
-ARG DOWNLOAD_SRC=/tmp/src
+ARG DOWNLOAD_SRC=/tmp
 ENV DOWNLOAD_SRC=$DOWNLOAD_SRC
 
 # 安装依赖包
 ARG PKG_DEPS="\
     zsh \
     bash \
+    bash-completion \
     dnsutils \
     iproute2 \
     net-tools \
     git \
     vim \
+    tzdata \
     curl \
     wget \
+    axel \
     lsof \
     zip \
     unzip \
@@ -57,23 +61,26 @@ ARG PKG_DEPS="\
     tree \
     htop \
     screen \
+    rsync \
     lrzsz \
     xz-utils \
     build-essential \
+    binutils \
     gawk \
     gettext \
-    patch \
-    python \
-    gcc-multilib \
-    texinfo \
-    xmlto \
-    upx \
-    libelf-dev \
-    autoconf \
-    automake \
-    libtool \
-    device-tree-compiler \
+    python2.7 \
+    python3 \
+    zlib1g-dev \
+    gcc \
     g++-multilib \
+    gcc-multilib \
+    libssl-dev \ 
+    jq \
+    psmisc \
+    locate \
+    socat \
+    sysstat \
+    telnet \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
@@ -84,11 +91,13 @@ COPY ["my.cnf", "/etc/my.cnf"]
 # ***** 安装依赖 *****
 RUN set -eux && \
    # 修改源地址
-   sed -i s#http://*.*ubuntu.com#http://mirrors.aliyun.com#g /etc/apt/sources.list && \
+   sed -i s#http://*.*ubuntu.com#http://mirrors.ustc.edu.cn#g /etc/apt/sources.list && \
    # 更新源地址并更新系统软件
    apt-get update -qqy && apt-get upgrade -qqy && \
    # 安装依赖包
-   apt-get install -qqy $PKG_DEPS && \
+   apt-get install -qqy --no-install-recommends $PKG_DEPS && \
+   apt-get -qqy --no-install-recommends autoremove --purge && \
+   apt-get -qqy --no-install-recommends autoclean && \
    rm -rf /var/lib/apt/lists/* && \
    # 更新时区
    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && \
@@ -106,13 +115,13 @@ RUN set -eux && \
 
 # ***** 下载mysql *****
 RUN set -eux && \
-    wget --no-check-certificate 'https://down.xiaonuo.live/?url=https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz' \
+    wget --no-check-certificate https://down.xiaonuo.live/?url=https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
     -O ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
     cd /tmp && tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz -C /data && \
-    mv Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17 mysql && \
+    cd /data && mv Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17 mysql && \
     mkdir -v /data/mysql/logs && mkdir -v /data/mysql/tmp && \
     chown -R mysql:mysql /data/mysql && chmod -R 775 /data/mysql && \
-    chomd 775 /docker-entrypoint.sh && \
+    chmod 775 /docker-entrypoint.sh && \
     ln -sf /data/mysql/lib/mysql/libjemalloc.so.1 /usr/lib64/libjemalloc.so.1 && \
     ln -sf /data/mysql/lib /data/mysql/lib64 && \
     echo "/data/mysql/lib" >> /etc/ld.so.conf
