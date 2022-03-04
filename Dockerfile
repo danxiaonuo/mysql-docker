@@ -83,6 +83,7 @@ ARG PKG_DEPS="\
     sysstat \
     telnet \
     libaio1 \
+    numactl \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
