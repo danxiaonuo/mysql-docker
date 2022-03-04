@@ -120,7 +120,7 @@ RUN set -eux && \
     wget --no-check-certificate https://down.xiaonuo.live/?url=https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
     -O ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
     cd /tmp && tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz -C /data && \
-    cd /data && mv Percona-Server-* mysql && \
+    cd /data && mv Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17 mysql && \
     mkdir -p /data/mysql/logs && mkdir -p /data/mysql/tmp && \
     chown -R mysql:mysql /data/mysql && chmod -R 775 /data/mysql && \
     chmod 775 /docker-entrypoint.sh && rm -rf /tmp/* \
