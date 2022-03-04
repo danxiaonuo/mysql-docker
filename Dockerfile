@@ -117,13 +117,15 @@ RUN set -eux && \
 RUN set -eux && \
     wget --no-check-certificate https://down.xiaonuo.live/?url=https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
     -O ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
-    mkdir -p /data &&  cd /tmp && \
-    tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz -C /data && \
-    cd /data && mv Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17 /data/mysql && \
+    mkdir -p /data &&  cd /tmp && tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
+    mv /tmp/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17 /data/mysql && \
     mkdir -p /data/mysql/logs && mkdir -p /data/mysql/tmp && \
     chown -R mysql:mysql /data/mysql && chmod -R 775 /data/mysql && \
     chmod 775 /docker-entrypoint.sh && \
     rm -rf ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
+    cp -rf /root/.oh-my-zsh /data/mysql/.oh-my-zsh && \
+    cp -rf /root/.zshrc /data/mysql/.zshrc && \
+    sed -i '5s#/root/.oh-my-zsh#/data/mysql/.oh-my-zsh#' /data/mysql/.zshrc && \
     ln -sf /data/mysql/lib/mysql/libjemalloc.so.1 /usr/lib64/libjemalloc.so.1 && \
     ln -sf /data/mysql/lib /data/mysql/lib64 && \
     ln -sf /data/mysql/bin/* /usr/bin/ && \
