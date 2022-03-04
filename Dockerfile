@@ -83,6 +83,7 @@ ARG PKG_DEPS="\
     socat \
     sysstat \
     telnet \
+    libaio \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
