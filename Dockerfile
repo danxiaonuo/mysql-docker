@@ -59,7 +59,6 @@ ARG PKG_DEPS="\
     lsof \
     zip \
     unzip \
-    sudo \
     tree \
     htop \
     screen \
@@ -83,7 +82,7 @@ ARG PKG_DEPS="\
     socat \
     sysstat \
     telnet \
-    libaio \
+    libaio1 \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
