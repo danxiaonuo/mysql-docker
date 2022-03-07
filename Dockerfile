@@ -62,6 +62,7 @@ ARG PKG_DEPS="\
     rsync \
     libaio1 \
     numactl \
+    xz-utils \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
@@ -95,12 +96,12 @@ COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
 RUN set -eux && \
     wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
     -O ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
-    mkdir -p /etc/mysql /data/mysql && cd /tmp && \ 
+    mkdir -p /data/mysql && cd /tmp && \ 
     tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
     cp -arf /tmp/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17/* /data/mysql/ && \
-    mkdir -p /data/mysql/data /data/mysql/logs /data/mysql/tmp && \
-    chown -R mysql:mysql /data/mysql && chmod -R 775 /data/mysql && \
-    chmod -R 777 /data/mysql/data /data/mysql/run /data/mysql/logs /data/mysql/tmp && \
+    mkdir -p /etc/mysql /data/mysql/data /data/mysql/logs /data/mysql/tmp /docker-entrypoint-initdb.d && \
+    chown -R mysql:mysql /etc/mysql /data/mysql && chmod -R 775 /data/mysql && \
+    chmod -R 1777 /data/mysql/data /data/mysql/run /data/mysql/logs /data/mysql/tmp && \
     chmod 775 /docker-entrypoint.sh && \
     rm -rf ${DOWNLOAD_SRC}/Percona-Server-* && \
     cp -rf /root/.oh-my-zsh /data/mysql/.oh-my-zsh && \
