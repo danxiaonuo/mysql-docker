@@ -192,6 +192,7 @@ docker_create_db_directories() {
 	# TODO other directories that are used by default? like /var/lib/mysql-files
 	# see https://github.com/docker-library/mysql/issues/562
 	mkdir -p "$DATADIR"
+	chown -R mysql:mysql "$DATADIR" && chmod -R 775 "$DATADIR"
 
 	if [ "$user" = "0" ]; then
 		# this will cause less disk access than `chown -R`
