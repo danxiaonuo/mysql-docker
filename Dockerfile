@@ -59,29 +59,7 @@ ARG PKG_DEPS="\
     lsof \
     zip \
     unzip \
-    tree \
-    htop \
-    screen \
     rsync \
-    lrzsz \
-    xz-utils \
-    build-essential \
-    binutils \
-    gawk \
-    gettext \
-    python2.7 \
-    python3 \
-    zlib1g-dev \
-    gcc \
-    g++-multilib \
-    gcc-multilib \
-    libssl-dev \ 
-    jq \
-    psmisc \
-    locate \
-    socat \
-    sysstat \
-    telnet \
     libaio1 \
     numactl \
     ca-certificates"
