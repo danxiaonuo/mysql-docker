@@ -88,17 +88,19 @@ RUN set -eux && \
    sed -i -e 's/mouse=/mouse-=/g' /usr/share/vim/vim*/defaults.vim && \
    /bin/zsh
 
+# ***** 拷贝文件 *****
+COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
+
 # ***** 下载mysql *****
 RUN set -eux && \
-    wget --no-check-certificate https://down.xiaonuo.live/?url=https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
     -O ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
-    mkdir -p /etc/mysql && mkdir -p /data/mysql && cd /tmp && \ 
+    mkdir -p /etc/mysql /data/mysql && cd /tmp && \ 
     tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
     cp -arf /tmp/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17/* /data/mysql/ && \
-    mkdir -p /data/mysql/data && mkdir -p /data/mysql/logs && mkdir -p /data/mysql/tmp && \
+    mkdir -p /data/mysql/data /data/mysql/logs /data/mysql/tmp && \
     chown -R mysql:mysql /data/mysql && chmod -R 775 /data/mysql && \
-    chmod -R 777 /data/mysql/data && chmod -R 777 /data/mysql/run && \
-    chmod -R 777 /data/mysql/logs && chmod -R 777 /data/mysql/tmp && \
+    chmod -R 777 /data/mysql/data /data/mysql/run /data/mysql/logs /data/mysql/tmp && \
     chmod 775 /docker-entrypoint.sh && \
     rm -rf ${DOWNLOAD_SRC}/Percona-Server-* && \
     cp -rf /root/.oh-my-zsh /data/mysql/.oh-my-zsh && \
@@ -110,7 +112,6 @@ RUN set -eux && \
     echo "/data/mysql/lib" >> /etc/ld.so.conf
 
 # ***** 拷贝文件 *****
-COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
 COPY ["conf/mysql/", "/etc/mysql/"]
 
 # ***** 容器信号处理 *****
