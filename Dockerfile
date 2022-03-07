@@ -65,10 +65,6 @@ ARG PKG_DEPS="\
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
-# ***** 拷贝文件 *****
-COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
-COPY ["my.cnf", "/etc/my.cnf"]
-
 # ***** 安装依赖 *****
 RUN set -eux && \
    # 修改源地址
@@ -96,7 +92,7 @@ RUN set -eux && \
 RUN set -eux && \
     wget --no-check-certificate https://down.xiaonuo.live/?url=https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
     -O ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
-    mkdir -p /data/mysql &&  cd /tmp && tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
+    mkdir -p /etc/mysql /data/mysql && cd /tmp && tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
     cp -arf /tmp/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17/* /data/mysql/ && \
     mkdir -p /data/mysql/data /data/mysql/logs /data/mysql/tmp && \
     chown -R mysql:mysql /data/mysql && chmod -R 775 /data/mysql && \
@@ -111,6 +107,9 @@ RUN set -eux && \
     ln -sf /data/mysql/bin/* /usr/bin/ && \
     echo "/data/mysql/lib" >> /etc/ld.so.conf
 
+# ***** 拷贝文件 *****
+COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
+COPY ["conf/mysql/", "/etc/mysql/"]
 
 # ***** 容器信号处理 *****
 STOPSIGNAL SIGQUIT
