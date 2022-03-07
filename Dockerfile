@@ -99,18 +99,19 @@ RUN set -eux && \
     mkdir -p /data/mysql && cd /tmp && \ 
     tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
     cp -arf /tmp/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17/* /data/mysql/ && \
-    mkdir -p /etc/mysql /data/mysql/data /data/mysql/logs /data/mysql/tmp /docker-entrypoint-initdb.d && \
-    chown -R mysql:mysql /etc/mysql /data/mysql && chmod -R 775 /data/mysql && \
-    chmod -R 1777 /data/mysql/data /data/mysql/run /data/mysql/logs /data/mysql/tmp && \
-    chmod 775 /docker-entrypoint.sh && \
-    rm -rf ${DOWNLOAD_SRC}/Percona-Server-* && \
-    cp -rf /root/.oh-my-zsh /data/mysql/.oh-my-zsh && \
-    cp -rf /root/.zshrc /data/mysql/.zshrc && \
+    cp -arf /root/.oh-my-zsh /data/mysql/.oh-my-zsh && \
+    cp -arf /root/.zshrc /data/mysql/.zshrc && \
     sed -i '5s#/root/.oh-my-zsh#/data/mysql/.oh-my-zsh#' /data/mysql/.zshrc && \
     ln -sf /data/mysql/lib/mysql/libjemalloc.so.1 /usr/lib64/libjemalloc.so.1 && \
     ln -sf /data/mysql/lib /data/mysql/lib64 && \
     ln -sf /data/mysql/bin/* /usr/bin/ && \
-    echo "/data/mysql/lib" >> /etc/ld.so.conf
+    echo "/data/mysql/lib" >> /etc/ld.so.conf && \
+    mkdir -p /etc/mysql /data/mysql/data /data/mysql/logs /data/mysql/tmp /docker-entrypoint-initdb.d && \
+    chown -R mysql:mysql /etc/mysql /data/mysql && chmod -R 775 /data/mysql && \
+    chmod -R 1777 /data/mysql/data /data/mysql/run /data/mysql/logs /data/mysql/tmp && \
+    chmod 775 /docker-entrypoint.sh && \
+    rm -rf ${DOWNLOAD_SRC}/Percona-Server-*
+    
 
 # ***** 拷贝文件 *****
 COPY ["conf/mysql/", "/etc/mysql/"]
