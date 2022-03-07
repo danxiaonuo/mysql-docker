@@ -30,7 +30,7 @@ ENV MYSQL_VERSION=$MYSQL_VERSION
 # 工作目录
 ARG MYSQL_DIR=/data/mysql
 ENV MYSQL_DIR=$MYSQL_DIR
-ARG MYSQL_DATA=/data/mysql
+ARG MYSQL_DATA=/data/mysql/data
 ENV MYSQL_DATA=$MYSQL_DATA
 # 环境变量
 ARG PATH=/data/mysql/bin:$PATH
