@@ -122,9 +122,6 @@ STOPSIGNAL SIGQUIT
 # ***** 监听端口 *****
 EXPOSE 3306 33060
 
-# ***** 运行用户 *****
-USER mysql
-
 # ***** 工作目录 *****
 WORKDIR ${MYSQL_DIR}
 
