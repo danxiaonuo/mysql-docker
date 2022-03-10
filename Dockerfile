@@ -63,6 +63,7 @@ ARG PKG_DEPS="\
     libaio1 \
     numactl \
     xz-utils \
+    gnupg \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
