@@ -42,6 +42,8 @@ ARG PKG_DEPS="\
     zip \
     unzip \
     rsync \
+    iputils-ping \
+    telnet \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
