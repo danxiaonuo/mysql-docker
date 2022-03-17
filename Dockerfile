@@ -68,6 +68,7 @@ ARG PKG_DEPS="\
     gnupg2 \
     psmisc \
     libmecab2 \
+    debsums \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
