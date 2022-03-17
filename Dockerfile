@@ -1,8 +1,8 @@
 #############################
 #     设置公共的变量         #
 #############################
-ARG BASE_IMAGE_TAG=buster-slim
-FROM debian:${BASE_IMAGE_TAG}
+ARG BASE_IMAGE_TAG=20.04
+FROM ubuntu:${BASE_IMAGE_TAG}
 
 # 作者描述信息
 MAINTAINER danxiaonuo
@@ -16,9 +16,9 @@ ENV LANG=$LANG
 # 镜像变量
 ARG DOCKER_IMAGE=danxiaonuo/mysql
 ENV DOCKER_IMAGE=$DOCKER_IMAGE
-ARG DOCKER_IMAGE_OS=debian
+ARG DOCKER_IMAGE_OS=ubuntu
 ENV DOCKER_IMAGE_OS=$DOCKER_IMAGE_OS
-ARG DOCKER_IMAGE_TAG=buster-slim
+ARG DOCKER_IMAGE_TAG=20.04
 ENV DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG
 
 # mysql版本号
@@ -115,6 +115,8 @@ COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
 RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
+    # 修改源地址
+    sed -i s#http://*.*ubuntu.com#https://mirrors.ustc.edu.cn#g /etc/apt/sources.list && \
     # 下载mysql源
     wget --no-check-certificate https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb \
     -O ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
