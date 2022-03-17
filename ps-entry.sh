@@ -162,7 +162,7 @@ docker_verify_minimum_env() {
 			    - MYSQL_ROOT_PASSWORD
 			    - MYSQL_ALLOW_EMPTY_PASSWORD
 			    - MYSQL_RANDOM_ROOT_PASSWORD
-				- MYSQL_REPL_PASSWORD
+		            - MYSQL_REPL_PASSWORD
 		EOF
 	fi
 
@@ -277,7 +277,7 @@ docker_setup_db() {
 	if [ -n "$MYSQL_REPL_PASSWORD" ]; then
 		read -r -d '' rootCreate <<-EOSQL || true
 		    CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_REPL_PASSWORD}';
-			GRANT REPLICATION SLAVE,REPLICATION Client,BACKUP_ADMIN ON *.* TO 'repl' @'%';
+		    GRANT REPLICATION SLAVE,REPLICATION Client,BACKUP_ADMIN ON *.* TO 'repl' @'%';
 		EOSQL
 	fi
 
