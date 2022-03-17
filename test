@@ -1,8 +1,8 @@
 #############################
 #     设置公共的变量         #
 #############################
-ARG BASE_IMAGE_TAG=20.04
-FROM ubuntu:${BASE_IMAGE_TAG}
+ARG BASE_IMAGE_TAG=buster-slim
+FROM debian:${BASE_IMAGE_TAG}
 
 # 作者描述信息
 MAINTAINER danxiaonuo
@@ -16,9 +16,9 @@ ENV LANG=$LANG
 # 镜像变量
 ARG DOCKER_IMAGE=danxiaonuo/mysql
 ENV DOCKER_IMAGE=$DOCKER_IMAGE
-ARG DOCKER_IMAGE_OS=ubuntu
+ARG DOCKER_IMAGE_OS=debian
 ENV DOCKER_IMAGE_OS=$DOCKER_IMAGE_OS
-ARG DOCKER_IMAGE_TAG=20.04
+ARG DOCKER_IMAGE_TAG=buster-slim
 ENV DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG
 
 # mysql版本号
@@ -32,12 +32,11 @@ ARG MYSQL_DIR=/var/lib/mysql
 ENV MYSQL_DIR=$MYSQL_DIR
 ARG MYSQL_DATA=/var/lib/mysql/data
 ENV MYSQL_DATA=$MYSQL_DATA
-# 环境变量
-ARG PATH=/data/mysql/bin:$PATH
-ENV PATH=$PATH
+
 # 环境设置
 ARG DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=$DEBIAN_FRONTEND
+
 # 源文件下载路径
 ARG DOWNLOAD_SRC=/tmp
 ENV DOWNLOAD_SRC=$DOWNLOAD_SRC
@@ -66,14 +65,14 @@ ARG PKG_DEPS="\
     libaio1 \
     numactl \
     xz-utils \
-    gnupg \
+    gnupg2 \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
 # ***** 安装依赖 *****
 RUN set -eux && \
    # 修改源地址
-   sed -i s#http://*.*debian.org#http://mirrors.ustc.edu.cn#g /etc/apt/sources.list && \
+   sed -i s#http://*.*debian.org#https://mirrors.ustc.edu.cn#g /etc/apt/sources.list && \
    # 更新源地址并更新系统软件
    apt-get update -qqy && apt-get upgrade -qqy && \
    # 安装依赖包
@@ -116,24 +115,24 @@ COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
 
 # ***** 下载mysql *****
 RUN set -eux && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/tarball/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz \
-    -O ${DOWNLOAD_SRC}/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
-    mkdir -p /data/mysql && cd /tmp && \ 
-    tar zxvf Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17.tar.gz && \
-    cp -arf /tmp/Percona-Server-${MYSQL_VERSION}-Linux.x86_64.glibc2.17/* /data/mysql/ && \
-    cp -arf /root/.oh-my-zsh /data/mysql/.oh-my-zsh && \
-    cp -arf /root/.zshrc /data/mysql/.zshrc && \
-    sed -i '5s#/root/.oh-my-zsh#/data/mysql/.oh-my-zsh#' /data/mysql/.zshrc && \
-    ln -sf /data/mysql/lib/mysql/libjemalloc.so.1 /usr/lib64/libjemalloc.so.1 && \
-    ln -sf /data/mysql/lib /data/mysql/lib64 && \
-    ln -sf /data/mysql/bin/* /usr/bin/ && \
-    echo "/data/mysql/lib" >> /etc/ld.so.conf && \
-    mkdir -p /etc/mysql /data/mysql/data /data/mysql/logs /data/mysql/tmp /docker-entrypoint-initdb.d && \
-    chown -R mysql:mysql /etc/mysql /data/mysql && chmod -R 775 /data/mysql && \
-    chmod -R 1777 /data/mysql/data /data/mysql/run /data/mysql/logs /data/mysql/tmp && \
-    chmod 775 /docker-entrypoint.sh && \
-    rm -rf ${DOWNLOAD_SRC}/Percona-Server-*
-    
+    # 设置mysql用户
+    groupadd -r mysql && useradd -r -g mysql mysql && \
+    # 下载mysql源
+    wget --no-check-certificate https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb \
+    -O ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
+    # 加载mysql源
+    dpkg -i ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
+    percona-release setup ps80 && \
+    # 安装mysql
+    apt-get install -qqy --no-install-recommends percona-server-server percona-server-client && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
+    rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/my.cnf.d && mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
+    chown -R mysql:mysql ${MYSQL_DIR} /var/run/mysqld && \
+    chmod 1777 ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint.sh && \
+    cp -arf /root/.oh-my-zsh ${MYSQL_DIR}/.oh-my-zsh && \
+    cp -arf /root/.zshrc ${MYSQL_DIR}/.zshrc && \
+    sed -i '5s#/root/.oh-my-zsh#${MYSQL_DIR}/.oh-my-zsh#' /data/mysql/.zshrc
 
 # ***** 拷贝文件 *****
 COPY ["conf/mysql/", "/etc/mysql/"]
