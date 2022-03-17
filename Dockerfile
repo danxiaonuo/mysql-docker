@@ -66,6 +66,8 @@ ARG PKG_DEPS="\
     numactl \
     xz-utils \
     gnupg2 \
+    psmisc \
+    libmecab2 \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
@@ -116,15 +118,14 @@ RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
     # 下载mysql
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-common_${MYSQL_VERSION}-1.buster_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.buster_amd64.deb && \
     wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-server_${MYSQL_VERSION}-1.buster_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.buster_amd64.deb && \
     wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-client_${MYSQL_VERSION}-1.buster_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.buster_amd64.deb && \
-    # 加载mysql源
+    # 安装percona-mysql
     dpkg -i ${DOWNLOAD_SRC}/percona-server-*.deb && \
-    percona-release setup ps80 && \
-    # 安装mysql
-    apt-get install -qqy --no-install-recommends percona-server-server percona-server-client && \
     # 删除临时文件
     rm -rf /var/lib/apt/lists/* && \
     rm -rf ${DOWNLOAD_SRC}/percona-server-*.deb && \
