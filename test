@@ -125,8 +125,10 @@ RUN set -eux && \
     percona-release setup ps80 && \
     # 安装mysql
     apt-get install -qqy --no-install-recommends percona-server-server percona-server-client && \
+    # 删除临时文件
     rm -rf /var/lib/apt/lists/* && \
     rm -rf ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
+    # 创建mysql相关目录文件并授权
     rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/my.cnf.d && mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
     chown -R mysql:mysql ${MYSQL_DIR} /var/run/mysqld && \
     chmod 1777 ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint.sh && \
