@@ -1,8 +1,8 @@
 #############################
 #     设置公共的变量         #
 #############################
-ARG BASE_IMAGE_TAG=20.04
-FROM ubuntu:${BASE_IMAGE_TAG}
+ARG BASE_IMAGE_TAG=buster-slim
+FROM debian:${BASE_IMAGE_TAG}
 
 # 作者描述信息
 MAINTAINER danxiaonuo
@@ -16,9 +16,9 @@ ENV LANG=$LANG
 # 镜像变量
 ARG DOCKER_IMAGE=danxiaonuo/mysql
 ENV DOCKER_IMAGE=$DOCKER_IMAGE
-ARG DOCKER_IMAGE_OS=ubuntu
+ARG DOCKER_IMAGE_OS=debian
 ENV DOCKER_IMAGE_OS=$DOCKER_IMAGE_OS
-ARG DOCKER_IMAGE_TAG=20.04
+ARG DOCKER_IMAGE_TAG=buster-slim
 ENV DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG
 
 # mysql版本号
@@ -115,19 +115,19 @@ COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
 RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
-    # 修改源地址
-    sed -i s#http://*.*ubuntu.com#https://mirrors.ustc.edu.cn#g /etc/apt/sources.list && \
-    # 下载mysql源
-    wget --no-check-certificate https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb \
-    -O ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
+    # 下载mysql
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-server_${MYSQL_VERSION}-1.buster_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.buster_amd64.deb && \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-client_${MYSQL_VERSION}-1.buster_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.buster_amd64.deb && \
     # 加载mysql源
-    dpkg -i ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
+    dpkg -i ${DOWNLOAD_SRC}/percona-server-*.deb && \
     percona-release setup ps80 && \
     # 安装mysql
     apt-get install -qqy --no-install-recommends percona-server-server percona-server-client && \
     # 删除临时文件
     rm -rf /var/lib/apt/lists/* && \
-    rm -rf ${DOWNLOAD_SRC}/percona-release_latest.$(lsb_release -sc)_all.deb && \
+    rm -rf ${DOWNLOAD_SRC}/percona-server-*.deb && \
     # 创建mysql相关目录文件并授权
     rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/my.cnf.d && mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
     chown -R mysql:mysql ${MYSQL_DIR} /var/run/mysqld && \
