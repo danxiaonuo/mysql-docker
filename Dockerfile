@@ -67,8 +67,14 @@ RUN set -eux && \
    sed -i -e 's/mouse=/mouse-=/g' /usr/share/vim/vim*/defaults.vim && \
    /bin/zsh
    
- # ***** 容器信号处理 *****
+# ***** 拷贝文件 *****
+COPY ["ps-entry.sh", "/docker-entrypoint.sh"]
+
+# ***** 容器信号处理 *****
 STOPSIGNAL SIGQUIT
+
+# ***** 入口 *****
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # ***** 监听端口 *****
 EXPOSE 3306 33060 33061
