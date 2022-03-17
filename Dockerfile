@@ -143,7 +143,7 @@ COPY ["conf/mysql/", "/etc/mysql/"]
 STOPSIGNAL SIGQUIT
 
 # ***** 监听端口 *****
-EXPOSE 3306 33060
+EXPOSE 3306 33060 33061
 
 # ***** 工作目录 *****
 WORKDIR ${MYSQL_DIR}
