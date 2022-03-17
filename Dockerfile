@@ -131,12 +131,12 @@ RUN set -eux && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf ${DOWNLOAD_SRC}/percona-server-*.deb && \
     # 创建mysql相关目录文件并授权
-    rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/my.cnf.d && mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
+    rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/mysql /etc/my.cnf.d && mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
     chown -R mysql:mysql ${MYSQL_DIR} /var/run/mysqld && \
     chmod 1777 ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint.sh && \
     cp -arf /root/.oh-my-zsh ${MYSQL_DIR}/.oh-my-zsh && \
     cp -arf /root/.zshrc ${MYSQL_DIR}/.zshrc && \
-    sed -i '5s#/root/.oh-my-zsh#${MYSQL_DIR}/.oh-my-zsh#' /data/mysql/.zshrc
+    sed -i '5s#/root/.oh-my-zsh#${MYSQL_DIR}/.oh-my-zsh#' ${MYSQL_DIR}/.zshrc
 
 # ***** 拷贝文件 *****
 COPY ["conf/mysql/", "/etc/mysql/"]
