@@ -31,7 +31,7 @@ ENV MYSQL_VERSION=$MYSQL_VERSION
 ARG MYSQL_DIR=/var/lib/mysql
 ENV MYSQL_DIR=$MYSQL_DIR
 # 数据目录
-ARG MYSQL_DATA=/var/lib/mysql/data
+ARG MYSQL_DATA=/var/lib/mysql
 ENV MYSQL_DATA=$MYSQL_DATA
 
 # 环境设置
@@ -134,8 +134,8 @@ RUN set -eux && \
     rm -rf ${DOWNLOAD_SRC}/percona-server-*.deb && \
     # 创建mysql相关目录文件并授权
     rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/mysql /etc/my.cnf.d && \
-    mkdir -p ${MYSQL_DIR} ${MYSQL_DATA} /var/run/mysqld /docker-entrypoint-initdb.d && \
-    chown -R mysql:mysql ${MYSQL_DIR} ${MYSQL_DATA} /var/run/mysqld && \
+    mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
+    chown -R mysql:mysql ${MYSQL_DIR} /var/run/mysqld && \
     chmod 1777 ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint.sh && \
     cp -arf /root/.oh-my-zsh ${MYSQL_DIR}/.oh-my-zsh && \
     cp -arf /root/.zshrc ${MYSQL_DIR}/.zshrc && \
