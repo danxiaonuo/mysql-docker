@@ -30,7 +30,8 @@ ENV MYSQL_VERSION=$MYSQL_VERSION
 # 工作目录
 ARG MYSQL_DIR=/var/lib/mysql
 ENV MYSQL_DIR=$MYSQL_DIR
-ARG MYSQL_DATA=/var/lib/mysql/data
+# 数据目录
+ARG MYSQL_DATA=/var/lib/mysql
 ENV MYSQL_DATA=$MYSQL_DATA
 
 # 环境设置
