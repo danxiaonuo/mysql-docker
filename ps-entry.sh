@@ -300,6 +300,7 @@ docker_setup_db() {
 		GRANT ALL ON *.* TO 'root'@'localhost' WITH GRANT OPTION ;
 		FLUSH PRIVILEGES ;
 		${rootCreate}
+		${replCreate}
 		DROP DATABASE IF EXISTS test ;
 	EOSQL
 
