@@ -274,8 +274,9 @@ docker_setup_db() {
 		EOSQL
 	fi
 	
+	local replCreate=
 	if [ -n "$MYSQL_REPL_PASSWORD" ]; then
-		read -r -d '' rootCreate <<-EOSQL || true
+		read -r -d '' replCreate <<-EOSQL || true
 		    CREATE USER 'repl'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_REPL_PASSWORD}';
 		    GRANT REPLICATION SLAVE,REPLICATION Client,BACKUP_ADMIN,PROCESS,RELOAD,LOCK TABLES ON *.* TO 'repl' @'%';
 		    GRANT SELECT ON PERFORMANCE_SCHEMA.log_status TO 'repl' @'%';
