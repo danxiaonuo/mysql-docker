@@ -1,8 +1,8 @@
 #############################
 #     设置公共的变量         #
 #############################
-ARG BASE_IMAGE_TAG=buster-slim
-FROM debian:${BASE_IMAGE_TAG}
+ARG BASE_IMAGE_TAG=20.04
+FROM ubuntu:${BASE_IMAGE_TAG}
 
 # 作者描述信息
 MAINTAINER danxiaonuo
@@ -10,15 +10,15 @@ MAINTAINER danxiaonuo
 ARG TZ=Asia/Shanghai
 ENV TZ=$TZ
 # 语言设置
-ARG LANG=C.UTF-8
+ARG LANG=en_US.UTF-8
 ENV LANG=$LANG
 
 # 镜像变量
 ARG DOCKER_IMAGE=danxiaonuo/mysql
 ENV DOCKER_IMAGE=$DOCKER_IMAGE
-ARG DOCKER_IMAGE_OS=debian
+ARG DOCKER_IMAGE_OS=ubuntu
 ENV DOCKER_IMAGE_OS=$DOCKER_IMAGE_OS
-ARG DOCKER_IMAGE_TAG=buster-slim
+ARG DOCKER_IMAGE_TAG=20.04
 ENV DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG
 
 # mysql版本号
@@ -91,6 +91,7 @@ RUN set -eux && \
    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true && \
    sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd && \
    sed -i -e 's/mouse=/mouse-=/g' /usr/share/vim/vim*/defaults.vim && \
+   locale-gen en_US.UTF-8 && localedef -f UTF-8 -i en_US en_US.UTF-8 && locale-gen && \
    /bin/zsh
 
 # add gosu for easy step-down from root
@@ -121,19 +122,18 @@ RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
     # 下载mysql
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-common_${MYSQL_VERSION}-1.buster_amd64.deb \
-    -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.buster_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-server_${MYSQL_VERSION}-1.buster_amd64.deb \
-    -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.buster_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/buster/x86_64/percona-server-client_${MYSQL_VERSION}-1.buster_amd64.deb \
-    -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.buster_amd64.deb && \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/focal/x86_64/percona-server-common_${MYSQL_VERSION}-1.focal_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.focal_amd64.deb && \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/focal/x86_64/percona-server-server_${MYSQL_VERSION}-1.focal_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.focal_amd64.deb && \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/focal/x86_64/percona-server-client_${MYSQL_VERSION}-1.focal_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.focal_amd64.deb && \
     # 安装percona-mysql
-    dpkg -i ${DOWNLOAD_SRC}/percona-server-*.deb && \
+    dpkg -i ${DOWNLOAD_SRC}/*.deb && \
     # 删除临时文件
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf ${DOWNLOAD_SRC}/percona-server-*.deb && \
-    # 创建mysql相关目录文件并授权
+    rm -rf /var/lib/apt/lists/* ${DOWNLOAD_SRC}/*.deb && \
     rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/mysql /etc/my.cnf.d && \
+	# 创建相关目录
     mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
     chown -R mysql:mysql ${MYSQL_DIR} /var/run/mysqld && \
     chmod 1777 ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint.sh && \
