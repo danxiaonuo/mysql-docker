@@ -71,6 +71,8 @@ ARG PKG_DEPS="\
     psmisc \
     libmecab2 \
     debsums \
+    locales \
+    language-pack-zh-hans \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
 
