@@ -128,11 +128,11 @@ RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
     # 下载mysql
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-common_${MYSQL_VERSION}-1.focal_amd64.deb \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-server_${MYSQL_VERSION}-1.focal_amd64.deb \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-server_${MYSQL_VERSION}-1.jammy_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.jammy_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-client_${MYSQL_VERSION}-1.focal_amd64.deb \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-client_${MYSQL_VERSION}-1.jammy_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.jammy_amd64.deb && \
     # 安装percona-mysql
     dpkg -i ${DOWNLOAD_SRC}/*.deb && \
