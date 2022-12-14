@@ -1,7 +1,7 @@
 #############################
 #     设置公共的变量         #
 #############################
-ARG BASE_IMAGE_TAG=20.04
+ARG BASE_IMAGE_TAG=22.04
 FROM ubuntu:${BASE_IMAGE_TAG}
 
 # 作者描述信息
@@ -10,7 +10,7 @@ MAINTAINER danxiaonuo
 ARG TZ=Asia/Shanghai
 ENV TZ=$TZ
 # 语言设置
-ARG LANG=en_US.UTF-8
+ARG LANG=zh_CN.UTF-8
 ENV LANG=$LANG
 
 # 镜像变量
@@ -18,13 +18,13 @@ ARG DOCKER_IMAGE=danxiaonuo/mysql
 ENV DOCKER_IMAGE=$DOCKER_IMAGE
 ARG DOCKER_IMAGE_OS=ubuntu
 ENV DOCKER_IMAGE_OS=$DOCKER_IMAGE_OS
-ARG DOCKER_IMAGE_TAG=20.04
+ARG DOCKER_IMAGE_TAG=22.04
 ENV DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG
 
 # mysql版本号
 ARG MYSQL_MAJOR=8.0
 ENV MYSQL_MAJOR=$MYSQL_MAJOR
-ARG MYSQL_VERSION=${MYSQL_MAJOR}.29-21
+ARG MYSQL_VERSION=${MYSQL_MAJOR}.30-22
 ENV MYSQL_VERSION=$MYSQL_VERSION
 
 # 工作目录
@@ -78,12 +78,16 @@ ENV PKG_DEPS=$PKG_DEPS
 
 # ***** 安装依赖 *****
 RUN set -eux && \
-   # 更新源地址并更新系统软件
-   apt-get update -qqy && apt-get upgrade -qqy && \
+   # 更新源地址
+   sed -i s@http://*.*ubuntu.com@https://mirrors.aliyun.com@g /etc/apt/sources.list && \
+   # 解决证书认证失败问题
+   touch /etc/apt/apt.conf.d/99verify-peer.conf && echo >>/etc/apt/apt.conf.d/99verify-peer.conf "Acquire { https::Verify-Peer false }" && \
+   # 更新系统软件
+   DEBIAN_FRONTEND=noninteractive apt-get update -qqy && apt-get upgrade -qqy && \
    # 安装依赖包
-   apt-get install -qqy --no-install-recommends $PKG_DEPS && \
-   apt-get -qqy --no-install-recommends autoremove --purge && \
-   apt-get -qqy --no-install-recommends autoclean && \
+   DEBIAN_FRONTEND=noninteractive apt-get install -qqy --no-install-recommends $PKG_DEPS && \
+   DEBIAN_FRONTEND=noninteractive apt-get -qqy --no-install-recommends autoremove --purge && \
+   DEBIAN_FRONTEND=noninteractive apt-get -qqy --no-install-recommends autoclean && \
    rm -rf /var/lib/apt/lists/* && \
    # 更新时区
    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && \
@@ -93,7 +97,7 @@ RUN set -eux && \
    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true && \
    sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd && \
    sed -i -e 's/mouse=/mouse-=/g' /usr/share/vim/vim*/defaults.vim && \
-   locale-gen en_US.UTF-8 && localedef -f UTF-8 -i en_US en_US.UTF-8 && locale-gen && \
+   locale-gen zh_CN.UTF-8 && localedef -f UTF-8 -i zh_CN zh_CN.UTF-8 && locale-gen && \
    /bin/zsh
 
 # add gosu for easy step-down from root
@@ -124,18 +128,18 @@ RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
     # 下载mysql
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/focal/x86_64/percona-server-common_${MYSQL_VERSION}-1.focal_amd64.deb \
-    -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.focal_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/focal/x86_64/percona-server-server_${MYSQL_VERSION}-1.focal_amd64.deb \
-    -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.focal_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/focal/x86_64/percona-server-client_${MYSQL_VERSION}-1.focal_amd64.deb \
-    -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.focal_amd64.deb && \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-common_${MYSQL_VERSION}-1.focal_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb && \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-server_${MYSQL_VERSION}-1.focal_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.jammy_amd64.deb && \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-client_${MYSQL_VERSION}-1.focal_amd64.deb \
+    -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.jammy_amd64.deb && \
     # 安装percona-mysql
     dpkg -i ${DOWNLOAD_SRC}/*.deb && \
     # 删除临时文件
     rm -rf /var/lib/apt/lists/* ${DOWNLOAD_SRC}/*.deb && \
     rm -rf ${MYSQL_DIR} /etc/my.cnf /etc/mysql /etc/my.cnf.d && \
-	# 创建相关目录
+    # 创建相关目录
     mkdir -p ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint-initdb.d && \
     chown -R mysql:mysql ${MYSQL_DIR} /var/run/mysqld && \
     chmod 1777 ${MYSQL_DIR} /var/run/mysqld /docker-entrypoint.sh && \
