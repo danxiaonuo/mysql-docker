@@ -22,9 +22,9 @@ ARG DOCKER_IMAGE_TAG=22.04
 ENV DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG
 
 # mysql版本号
-ARG MYSQL_MAJOR=8.0
+ARG MYSQL_MAJOR=8.1
 ENV MYSQL_MAJOR=$MYSQL_MAJOR
-ARG MYSQL_VERSION=${MYSQL_MAJOR}.30-22
+ARG MYSQL_VERSION=${MYSQL_MAJOR}.0-1
 ENV MYSQL_VERSION=$MYSQL_VERSION
 
 # 工作目录
@@ -128,11 +128,11 @@ RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
     # 下载mysql
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-${MYSQL_MAJOR}/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-server_${MYSQL_VERSION}-1.jammy_amd64.deb \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-${MYSQL_MAJOR}/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-server_${MYSQL_VERSION}-1.jammy_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-server_${MYSQL_VERSION}-1.jammy_amd64.deb && \
-    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-LATEST/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-client_${MYSQL_VERSION}-1.jammy_amd64.deb \
+    wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-${MYSQL_MAJOR}/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-client_${MYSQL_VERSION}-1.jammy_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-client_${MYSQL_VERSION}-1.jammy_amd64.deb && \
     # 安装percona-mysql
     dpkg -i ${DOWNLOAD_SRC}/*.deb && \
