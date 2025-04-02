@@ -72,8 +72,10 @@ ARG PKG_DEPS="\
     libmecab2 \
     debsums \
     locales \
-    libatomic1 \
-    libfido2-1 \
+    mysql-common \
+    libjemalloc1 \
+    libaio1 \
+    libmecab2 \
     percona-telemetry-agent \
     language-pack-zh-hans \
     ca-certificates"
