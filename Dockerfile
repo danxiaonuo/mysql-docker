@@ -132,6 +132,7 @@ RUN set -eux && \
     # 设置mysql用户
     groupadd -r mysql && useradd -r -g mysql mysql && \
     # 下载mysql
+    wget --no-check-certificate https://repo.percona.com/telemetry/apt/pool/main/p/percona-telemetry-agent/percona-telemetry-agent_1.0.3-4.jammy_amd64.deb -O ${DOWNLOAD_SRC}/percona-telemetry-agent_1.0.3-4.jammy_amd64.deb && \
     wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-${MYSQL_MAJOR}/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb \
     -O ${DOWNLOAD_SRC}/percona-server-common_${MYSQL_VERSION}-1.jammy_amd64.deb && \
     wget --no-check-certificate https://downloads.percona.com/downloads/Percona-Server-${MYSQL_MAJOR}/Percona-Server-${MYSQL_VERSION}/binary/debian/jammy/x86_64/percona-server-server_${MYSQL_VERSION}-1.jammy_amd64.deb \
