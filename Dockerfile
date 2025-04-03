@@ -75,6 +75,7 @@ ARG PKG_DEPS="\
     libatomic1 \
     libfido2-1 \
     libmecab2 \
+    logrotate \
     language-pack-zh-hans \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
