@@ -75,7 +75,6 @@ ARG PKG_DEPS="\
     libatomic1 \
     libfido2-1 \
     libmecab2 \
-    percona-telemetry-agent \
     language-pack-zh-hans \
     ca-certificates"
 ENV PKG_DEPS=$PKG_DEPS
