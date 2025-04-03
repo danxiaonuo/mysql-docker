@@ -15,9 +15,14 @@ services:
     # 覆盖容器启动后默认执行的命令
     command:
      - mysqld
+     - --skip-mysqlx
      - --character-set-server=utf8mb4
      - --collation-server=utf8mb4_bin
-     - --default-authentication-plugin=mysql_native_password
+     - --log_bin_trust_function_creators=1
+    # 宿主机共享进程命名空间
+    pid: host
+    # 使用系统的IPC命名空间
+    ipc: host
     # 允许容器中运行一些特权命令
     privileged: true
     # 指定容器退出后的重启策略为始终重启
